@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misc PYQ Quiz Bank</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="brand" onclick="goHome()">Misc PYQ Quiz Bank</button>
+  <nav class="topnav">
+    <button onclick="goHome()">Dashboard</button>
+    <button onclick="renderCustomBuilder(); showView('custom')">Custom Test</button>
+    <button onclick="renderHistory(); showView('history')">History</button>
+    <button id="theme-toggle" onclick="setTheme(getTheme()==='dark' ? 'light' : 'dark')">Dark mode</button>
+  </nav>
+</header>
+
+<div id="data-warning" class="banner hidden"></div>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="view-dashboard" class="view">
+    <h2>PYQ Tests</h2>
+    <p class="section-intro">Attempt a complete original year paper, exactly as it was set.</p>
+    <div id="pyq-cards" class="card-grid"></div>
+
+    <h2>Section-Wise Practice</h2>
+    <p class="section-intro">Practice one subject at a time, pooled from every year that's been added.</p>
+    <div id="section-cards" class="card-grid"></div>
+  </section>
+
+  <!-- CUSTOM TEST BUILDER -->
+  <section id="view-custom" class="view hidden">
+    <h2>Build a Custom Test</h2>
+    <div class="form-block">
+      <label>Years</label>
+      <div id="custom-years" class="chip-row"></div>
+    </div>
+    <div class="form-block">
+      <label>Sections</label>
+      <div id="custom-sections" class="chip-row"></div>
+    </div>
+    <div class="form-block">
+      <label for="custom-count">Number of Questions</label>
+      <select id="custom-count">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="all">All Available</option>
+      </select>
+    </div>
+    <button class="btn primary" onclick="startCustomTest()">Continue</button>
+  </section>
+
+  <!-- TEST CONFIG (order / shuffle / timer) -->
+  <section id="view-testconfig" class="view hidden">
+    <h2 id="config-title">Test</h2>
+    <p class="meta" id="config-meta"></p>
+
+    <div class="form-block">
+      <label for="config-count">Questions to include</label>
+      <input type="number" id="config-count" min="1">
+    </div>
+    <div class="form-block">
+      <label for="config-order">Question Order</label>
+      <select id="config-order">
+        <option value="original">Original Order</option>
+        <option value="random">Random Order</option>
+      </select>
+    </div>
+    <div class="form-block checkbox-row">
+      <label><input type="checkbox" id="config-shuffle"> Shuffle answer options</label>
+    </div>
+
+    <div class="form-block">
+      <label for="timer-mode">Timer</label>
+      <select id="timer-mode" onchange="toggleTimerFields()">
+        <option value="none">No Timer</option>
+        <option value="perQuestion">Per-Question Timer</option>
+        <option value="perTest">Per-Test Timer</option>
+      </select>
+    </div>
+
+    <div id="per-question-fields" class="form-block hidden">
+      <label for="per-question-select">Seconds per question</label>
+      <select id="per-question-select">
+        <option>15</option><option selected>30</option><option>45</option>
+        <option>60</option><option>90</option><option>120</option>
+        <option value="custom">Custom</option>
+      </select>
+      <input type="number" id="per-question-custom" placeholder="Custom seconds" class="hidden">
+    </div>
+
+    <div id="per-test-fields" class="form-block hidden">
+      <label for="per-test-select">Total minutes</label>
+      <select id="per-test-select">
+        <option>10</option><option selected>20</option><option>30</option>
+        <option>45</option><option>60</option>
+        <option value="custom">Custom</option>
+      </select>
+      <input type="number" id="per-test-custom" placeholder="Custom minutes" class="hidden">
+    </div>
+
+    <button class="btn primary" onclick="launchTest()">Start Test</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="view-quiz" class="view hidden">
+    <div class="quiz-header">
+      <span id="quiz-progress-label"></span>
+      <span id="quiz-timer" class="timer"></span>
+    </div>
+    <div class="progress-bar"><div id="quiz-progress-bar-fill" class="progress-bar-fill"></div></div>
+    <p class="meta" id="quiz-section-tag"></p>
+    <p id="quiz-question" class="quiz-question"></p>
+    <div id="quiz-options" class="options"></div>
+
+    <div class="quiz-actions">
+      <button id="prev-btn" class="btn" onclick="goToQuestion(activeQuiz.index - 1)">Previous</button>
+      <button class="btn" onclick="clearAnswer()">Clear Answer</button>
+      <button id="mark-btn" class="btn" onclick="toggleMark()">Mark for Review</button>
+      <button id="next-btn" class="btn primary" onclick="nextOrFinish()">Next</button>
+    </div>
+
+    <h3>Question Navigator</h3>
+    <div id="quiz-nav" class="nav-grid"></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="view-results" class="view hidden">
+    <h2 id="results-title"></h2>
+    <div id="results-overall" class="stat-grid"></div>
+
+    <div id="results-section-wrap" class="hidden">
+      <h3>Section-Wise Performance</h3>
+      <table id="results-section-table" class="data-table"></table>
+    </div>
+    <div id="results-year-wrap" class="hidden">
+      <h3>Year-Wise Performance</h3>
+      <table id="results-year-table" class="data-table"></table>
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn primary" onclick="openReview()">Review Answers</button>
+      <button class="btn" onclick="goHome()">Back to Dashboard</button>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section id="view-review" class="view hidden">
+    <h2 id="review-title"></h2>
+    <div id="review-list"></div>
+    <button class="btn" onclick="goHome()">Back to Dashboard</button>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="view-history" class="view hidden">
+    <h2>My Performance</h2>
+    <div id="history-list" class="card-grid"></div>
+  </section>
+
+</main>
+
+<script src="data/manifest.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
