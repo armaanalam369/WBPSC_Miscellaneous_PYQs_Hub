@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WBPSC Miscellaneous PrepHub (1,500 Verified PYQs)</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+
+  <!-- Header App Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <button id="nav-home-btn" class="brand-btn" title="Dashboard Home">
+        <span class="brand-icon">🏛️</span>
+        <span class="brand-name">PrepHub <span>PYQ</span></span>
+      </button>
+      <div id="data-validation-badge" class="data-badge" title="Data Integrity Monitor">Auditing Data...</div>
+    </div>
+    <div class="header-right">
+      <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle Theme" title="Toggle Theme">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Multi-View Shell -->
+  <main class="app-main">
+
+    <!-- View: Dashboard -->
+    <section id="view-dashboard" class="app-view active">
+      <div class="hero-banner">
+        <h2>WBPSC Miscellaneous Examination Archive (2001–2023)</h2>
+        <p>15 Complete Papers • 1,500 Exam Questions • 14 Classified Sections • Verified Answer Keys</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="tab-pyq">Full PYQ Papers (100 Qs)</button>
+        <button class="tab-btn" data-tab="tab-sections">Section-Wise Practice</button>
+        <button class="tab-btn" data-tab="tab-custom">Custom Test Builder</button>
+        <button class="tab-btn" data-tab="tab-history">Performance History</button>
+      </nav>
+
+      <!-- Tab 1: Full Year Papers -->
+      <div id="tab-pyq" class="tab-pane active">
+        <div class="tab-header">
+          <h3>Full Year Papers (100 Questions Each)</h3>
+          <span class="subtext">Original chronological sequence with authentic question numbers and answer keys</span>
+        </div>
+        <div id="pyq-cards-grid" class="cards-grid"></div>
+      </div>
+
+      <!-- Tab 2: Section-Wise Practice -->
+      <div id="tab-sections" class="tab-pane">
+        <div class="tab-header">
+          <h3>14 Subject Practice Modules</h3>
+          <span class="subtext">Dynamic counts calculated directly from the verified 1,500-question pool</span>
+        </div>
+        <div id="section-cards-grid" class="cards-grid"></div>
+      </div>
+
+      <!-- Tab 3: Custom Test Builder -->
+      <div id="tab-custom" class="tab-pane">
+        <div class="custom-builder-card">
+          <h3>Custom Test Architect</h3>
+          <p class="builder-desc">Construct personalized drills across specific years and subjects with customized timer modes.</p>
+
+          <form id="custom-test-form">
+            <div class="form-group">
+              <label>1. Select Source PYQ Years:</label>
+              <div class="checkbox-toolbar">
+                <button type="button" class="mini-btn" id="select-all-years">Select All</button>
+                <button type="button" class="mini-btn" id="clear-all-years">Clear All</button>
+              </div>
+              <div id="builder-years-list" class="chip-container"></div>
+            </div>
+
+            <div class="form-group">
+              <label>2. Select Subject Sections:</label>
+              <div class="checkbox-toolbar">
+                <button type="button" class="mini-btn" id="select-all-sections">Select All</button>
+                <button type="button" class="mini-btn" id="clear-all-sections">Clear All</button>
+              </div>
+              <div id="builder-sections-list" class="chip-container"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group half">
+                <label for="custom-q-count">3. Question Pool Limit:</label>
+                <select id="custom-q-count">
+                  <option value="10">10 Questions</option>
+                  <option value="20">20 Questions</option>
+                  <option value="25">25 Questions</option>
+                  <option value="50">50 Questions</option>
+                  <option value="100">100 Questions</option>
+                  <option value="all">All Matching Questions</option>
+                </select>
+                <span id="available-count-hint" class="hint-text">Calculating questions...</span>
+              </div>
+
+              <div class="form-group half">
+                <label for="custom-order">4. Question Ordering:</label>
+                <select id="custom-order">
+                  <option value="original">Original Sequential Order</option>
+                  <option value="random">Randomized Order</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group half">
+                <label for="custom-timer-mode">5. Timer Configuration:</label>
+                <select id="custom-timer-mode">
+                  <option value="none">No Timer (Untimed Study)</option>
+                  <option value="test">Per-Test Timer (Overall Countdown)</option>
+                  <option value="question">Per-Question Timer (Strict Speed Test)</option>
+                </select>
+              </div>
+
+              <div class="form-group half" id="timer-duration-group" style="display: none;">
+                <label for="custom-timer-val">Timer Duration:</label>
+                <select id="custom-timer-val"></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="custom-shuffle-options" />
+                <span>Shuffle Multiple-Choice Options (Preserves correct answer key)</span>
+              </label>
+            </div>
+
+            <button type="submit" id="start-custom-test-btn" class="primary-btn">Initialize Quiz Session</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tab 4: Performance History -->
+      <div id="tab-history" class="tab-pane">
+        <div class="tab-header">
+          <h3>Test Records & Attempt History</h3>
+          <button id="clear-history-btn" class="mini-btn danger">Clear History</button>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </section>
+
+    <!-- View: Active Quiz Interface -->
+    <section id="view-quiz" class="app-view">
+      <div class="quiz-sticky-top">
+        <div class="quiz-status-bar">
+          <div class="quiz-title-box">
+            <h4 id="quiz-header-title">Active Test</h4>
+            <span id="quiz-question-counter">Question 1 / 100</span>
+          </div>
+          <div class="quiz-right-controls">
+            <div id="quiz-timer-display" class="timer-pill">--:--</div>
+            <button id="quiz-nav-toggle-btn" class="icon-btn outline" aria-label="Question Navigator" title="Question Sheet">
+              📋 <span id="answered-nav-badge">0/0</span>
+            </button>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="quiz-progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Question Card & Navigator -->
+      <div class="quiz-body-layout">
+        <div class="quiz-main-card">
+          <div class="q-meta-strip">
+            <span id="q-meta-year" class="meta-tag">Year</span>
+            <span id="q-meta-number" class="meta-tag">Q No</span>
+            <span id="q-meta-section" class="meta-tag blue">Subject Section</span>
+            <span id="q-meta-repeat" class="meta-tag warning" style="display: none;"></span>
+          </div>
+
+          <div id="question-text" class="question-text">Loading question...</div>
+          <div id="options-container" class="options-container"></div>
+
+          <div class="quiz-actions-row">
+            <button id="btn-prev-q" class="secondary-btn">← Previous</button>
+            <button id="btn-review-q" class="secondary-btn warning">Mark for Review</button>
+            <button id="btn-clear-q" class="secondary-btn text-only">Clear Answer</button>
+            <button id="btn-next-q" class="primary-btn">Next →</button>
+          </div>
+        </div>
+
+        <!-- Off-Canvas Mobile Drawer & Desktop Navigator -->
+        <aside id="quiz-navigator-drawer" class="quiz-navigator">
+          <div class="drawer-header">
+            <h5>Question Sheet</h5>
+            <button id="close-drawer-btn" class="icon-btn text">✕</button>
+          </div>
+          <div class="drawer-legend">
+            <span><i class="legend-box ans"></i> Answered</span>
+            <span><i class="legend-box unans"></i> Unanswered</span>
+            <span><i class="legend-box rev"></i> Review</span>
+          </div>
+          <div id="question-grid-container" class="question-grid"></div>
+          <div class="drawer-footer">
+            <button id="btn-submit-test" class="primary-btn danger-bg">Submit Test</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- View: Performance Analytics -->
+    <section id="view-analytics" class="app-view">
+      <div class="analytics-container">
+        <div class="analytics-header">
+          <h2 id="result-title">Performance Analytics</h2>
+          <p id="result-timestamp">Timestamp</p>
+        </div>
+
+        <div class="summary-cards-row">
+          <div class="stat-card">
+            <span class="stat-label">Final Score</span>
+            <span id="stat-score" class="stat-val primary">0 / 0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Accuracy Rate</span>
+            <span id="stat-accuracy" class="stat-val">0.0%</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Time</span>
+            <span id="stat-time" class="stat-val">0m 00s</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Pace / Question</span>
+            <span id="stat-avg-time" class="stat-val">0.0s</span>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-pill success">Correct: <strong id="metric-correct">0</strong></div>
+          <div class="metric-pill danger">Incorrect: <strong id="metric-incorrect">0</strong></div>
+          <div class="metric-pill neutral">Skipped: <strong id="metric-unanswered">0</strong></div>
+        </div>
+
+        <!-- Section Table -->
+        <div class="analytics-table-card">
+          <h4>Section-Wise Breakdown</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Total</th>
+                  <th>Attempted</th>
+                  <th>Correct</th>
+                  <th>Incorrect</th>
+                  <th>Accuracy</th>
+                </tr>
+              </thead>
+              <tbody id="section-breakdown-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Year Table -->
+        <div class="analytics-table-card">
+          <h4>Year-Wise Performance Distribution</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Source Year</th>
+                  <th>Total</th>
+                  <th>Attempted</th>
+                  <th>Correct</th>
+                  <th>Incorrect</th>
+                  <th>Accuracy</th>
+                </tr>
+              </thead>
+              <tbody id="year-breakdown-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="analytics-cta-row">
+          <button id="btn-go-review" class="primary-btn">Review All Questions with Solutions</button>
+          <button id="btn-finish-dashboard" class="secondary-btn">Return to Dashboard</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: Detailed Review -->
+    <section id="view-review" class="app-view">
+      <div class="review-header">
+        <div class="review-header-left">
+          <button id="btn-back-to-analytics" class="secondary-btn mini">← Back to Analytics</button>
+          <h3 id="review-title">Detailed Solutions & Explanations</h3>
+        </div>
+        <div class="review-filters">
+          <button class="review-filter-btn active" data-filter="all">All</button>
+          <button class="review-filter-btn" data-filter="correct">Correct</button>
+          <button class="review-filter-btn" data-filter="incorrect">Incorrect</button>
+          <button class="review-filter-btn" data-filter="unanswered">Unanswered</button>
+        </div>
+      </div>
+      <div id="review-questions-list" class="review-questions-list"></div>
+    </section>
+
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
